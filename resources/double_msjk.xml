@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<circuit
+        xmlns="circuit"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="circuit xsd/circuit.xsd"
+>
+
+    <includes>
+        <include file="msjk.xml"/>
+    </includes>
+
+    <components>
+        <true name="j"/>
+        <true name="k"/>
+        <clock name="clk" init="false" freq="300" duty="0.0001"/>
+        <chip name="jk1" type="msjk">
+            <link>
+                <gate name="j"/>
+                <in name="j"/>
+            </link>
+            <link>
+                <gate name="clk"/>
+                <in name="clk"/>
+            </link>
+            <link>
+                <gate name="k"/>
+                <in name="k"/>
+            </link>
+        </chip>
+        <chip name="jk2" type="msjk">
+            <link>
+                <out chip="jk1" name="q"/>
+                <in name="j"/>
+            </link>
+            <link>
+                <gate name="clk"/>
+                <in name="clk"/>
+            </link>
+            <link>
+                <out chip="jk1" name="q"/>
+                <in name="k"/>
+            </link>
+        </chip>
+    </components>
+
+</circuit>

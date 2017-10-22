@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+
+<xs:schema
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="chipset"
+        xmlns="chipset"
+        elementFormDefault="qualified"
+>
+
+    <!-- TYPES ***************************************************** -->
+    <xs:simpleType name="name">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[^.]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="file">
+        <xs:restriction base="xs:string">
+            <xs:pattern value=".+"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="aboolgate">
+        <xs:attribute name="name" type="name" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="amonoinputgate">
+        <xs:choice>
+            <xs:element ref="ainput"/>
+        </xs:choice>
+        <xs:attribute name="name" type="name" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="amultiinputgate">
+        <xs:sequence>
+            <xs:element ref="ainput" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="name" use="required"/>
+    </xs:complexType>
+    <!-- *********************************************************** -->
+
+    <!-- SCHEMA **************************************************** -->
+    <xs:element name="chipset">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="includes" minOccurs="0"/>
+                <xs:element ref="inputs"/>
+                <xs:element ref="outputs"/>
+                <xs:element ref="components"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="name" use="required"/>
+            <xs:attribute name="granularity" type="xs:long" default="10000000"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- *********************************************************** -->
+
+    <!-- SETUP ***************************************************** -->
+    <xs:element name="includes">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="include" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="include">
+        <xs:complexType>
+            <xs:attribute name="file" type="file" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="inputs">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="input" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="input">
+        <xs:complexType>
+            <xs:attribute name="name" type="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="outputs">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="output" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="output">
+        <xs:complexType>
+            <xs:attribute name="name" type="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- *********************************************************** -->
+
+    <!-- COMPONENTS ************************************************ -->
+    <xs:element name="components">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="agate" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="agate" abstract="true"/>
+    <xs:element name="aboolgate" abstract="true" substitutionGroup="agate" type="aboolgate"/>
+    <xs:element name="amonoinputgate" abstract="true" substitutionGroup="agate" type="amonoinputgate"/>
+    <xs:element name="amultiinputgate" abstract="true" substitutionGroup="agate" type="amultiinputgate"/>
+    <xs:element name="true" substitutionGroup="aboolgate"/>
+    <xs:element name="false" substitutionGroup="aboolgate"/>
+    <xs:element name="clock" substitutionGroup="agate">
+        <xs:complexType>
+            <xs:attribute name="name" type="name" use="required"/>
+            <xs:attribute name="init" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:pattern value='(false|true)'/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="freq" type="xs:double" use="required"/>
+            <xs:attribute name="duty" type="xs:double" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="not" substitutionGroup="amonoinputgate"/>
+    <xs:element name="and" substitutionGroup="amultiinputgate"/>
+    <xs:element name="or" substitutionGroup="amultiinputgate"/>
+    <xs:element name="chip" substitutionGroup="agate">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="link" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element ref="ainput"/>
+                            <xs:element ref="in"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="name" use="required"/>
+            <xs:attribute name="type" type="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="in">
+        <xs:complexType>
+            <xs:attribute name="name" type="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ainput" abstract="true"/>
+    <xs:element name="gate" substitutionGroup="ainput">
+        <xs:complexType>
+            <xs:attribute name="name" type="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="out" substitutionGroup="ainput">
+        <xs:complexType>
+            <xs:attribute name="chip" type="name" use="required"/>
+            <xs:attribute name="name" type="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- *********************************************************** -->
+
+</xs:schema>

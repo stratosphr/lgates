@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chipset
+        xmlns="chipset"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="chipset xsd/chipset.xsd"
+        name="msjk"
+>
+    
+    <includes>
+        <include file="not.xml"/>
+    </includes>
+
+    <inputs>
+        <input name="j"/>
+        <input name="clk"/>
+        <input name="k"/>
+    </inputs>
+
+    <outputs>
+        <output name="q"/>
+        <output name="\q"/>
+    </outputs>
+
+    <components>
+        <not name="\clk">
+            <gate name="clk"/>
+        </not>
+        <and name="and1">
+            <gate name="\q"/>
+            <gate name="k"/>
+            <gate name="clk"/>
+        </and>
+        <and name="and2">
+            <gate name="clk"/>
+            <gate name="k"/>
+            <gate name="q"/>
+        </and>
+        <chip name="\and1" type="not">
+            <link>
+                <gate name="and1"/>
+                <in name="a"/>
+            </link>
+        </chip>
+        <not name="\and2">
+            <gate name="and2"/>
+        </not>
+        <and name="and3">
+            <out chip="\and1" name="\a"/>
+            <gate name="\and4"/>
+        </and>
+        <and name="and4">
+            <gate name="\and3"/>
+            <gate name="\and2"/>
+        </and>
+        <not name="\and3">
+            <gate name="and3"/>
+        </not>
+        <not name="\and4">
+            <gate name="and4"/>
+        </not>
+        <and name="and5">
+            <gate name="\and3"/>
+            <gate name="\clk"/>
+        </and>
+        <and name="and6">
+            <gate name="\clk"/>
+            <gate name="\and4"/>
+        </and>
+        <not name="\and5">
+            <gate name="and5"/>
+        </not>
+        <not name="\and6">
+            <gate name="and6"/>
+        </not>
+        <and name="and7">
+            <gate name="\and5"/>
+            <gate name="\q"/>
+        </and>
+        <and name="and8">
+            <gate name="q"/>
+            <gate name="\and6"/>
+        </and>
+        <not name="q">
+            <gate name="and7"/>
+        </not>
+        <not name="\q">
+            <gate name="and8"/>
+        </not>
+    </components>
+
+</chipset>
